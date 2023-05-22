@@ -1,5 +1,5 @@
 import React, { useImperativeHandle, useState } from 'react';
-import { Form, Modal, Spin, Input, message, DatePicker, Select } from 'antd';
+import { Form, Modal, Spin, Input, message, DatePicker, Select,Button } from 'antd';
 import { insert } from '../api';
 import moment from 'moment';
 
@@ -22,7 +22,9 @@ function AddModal({ updateList, pageInfo }, ref) {
         setVisible(false);
     };
 
-    
+    const clear =()=>{
+        form.resetFields();
+    };
 
     const disabledDay = current => {
         // 只能选择当前日期的两个月范围内
@@ -68,62 +70,64 @@ function AddModal({ updateList, pageInfo }, ref) {
                 title='新增学生'
                 width={600}
                 open={visible}
-                onOk={onFinish}
                 onCancel={onCancel}
                 destroyOnClose
                 maskClosable={false}
-                closable={false}
+                closable={true}
+                footer={[
+                    <Button key='continue' onClick={clear}>重置</Button>,
+                    <Button key='confirm' onClick={onFinish}>提交</Button>]}
             >
-                <Spin spinning={spinning}>
-                    <Form form={form} preserve={false}>
-                        <Form.Item
-                            label='学号'
-                            name='sno'
-                            rules={rules}
-                            {...layout}>
-                            <Input placeholder='请输入学号' />
-                        </Form.Item>
-                        <Form.Item
-                            label='姓名'
-                            name='sname'
-                            rules={rules}
-                            {...layout}>
-                            <Input placeholder='请输入姓名' />
-                        </Form.Item>
-                        <Form.Item
-                            label='性别'
-                            name='ssex'
-                            rules={rules}
-                            {...layout}>
-                            <Select
-                                placeholder='请选择性别'
-                                options={[
-                                    {
-                                        value: '男',
-                                        label: '男'
-                                    }, {
-                                        value: '女',
-                                        label: '女'
-                                    }
-                                ]} />
-                        </Form.Item>
-                        <Form.Item
-                            label='学院'
-                            name='sdept'
-                            rules={rules}
-                            {...layout}>
-                            <Input placeholder='请输入学院' />
-                        </Form.Item>
-                        <Form.Item
-                            label='出生日期'
-                            name='birthday'
-                            rules={rules}
-                            {...layout}>
-                            <DatePicker placeholder='请选择出生日期' style={{ width: 460 }}  disabledDate={disabledDay}/>
-                        </Form.Item>
-                    </Form>
-                </Spin>
-            </Modal>
+            <Spin spinning={spinning}>
+                <Form form={form} preserve={false}>
+                    <Form.Item
+                        label='学号'
+                        name='sno'
+                        rules={rules}
+                        {...layout}>
+                        <Input placeholder='请输入学号' />
+                    </Form.Item>
+                    <Form.Item
+                        label='姓名'
+                        name='sname'
+                        rules={rules}
+                        {...layout}>
+                        <Input placeholder='请输入姓名' />
+                    </Form.Item>
+                    <Form.Item
+                        label='性别'
+                        name='ssex'
+                        rules={rules}
+                        {...layout}>
+                        <Select
+                            placeholder='请选择性别'
+                            options={[
+                                {
+                                    value: '男',
+                                    label: '男'
+                                }, {
+                                    value: '女',
+                                    label: '女'
+                                }
+                            ]} />
+                    </Form.Item>
+                    <Form.Item
+                        label='学院'
+                        name='sdept'
+                        rules={rules}
+                        {...layout}>
+                        <Input placeholder='请输入学院' />
+                    </Form.Item>
+                    <Form.Item
+                        label='出生日期'
+                        name='birthday'
+                        rules={rules}
+                        {...layout}>
+                        <DatePicker placeholder='请选择出生日期' style={{ width: 460 }} disabledDate={disabledDay} />
+                    </Form.Item>
+                </Form>
+            </Spin>
+        </Modal >
         </>
     );
 }
