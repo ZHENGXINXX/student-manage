@@ -171,7 +171,7 @@ export default function Home() {
         </Table>
       </Spin>
       <AddModal ref={addRef} updateList={updateList} pageInfo={pageInfo} />
-      <EditModal ref={editRef} />
+      <EditModal ref={editRef} updateList={updateList} pageInfo={pageInfo} />
       <DetailModal ref={detailRef} />
     </>
   );

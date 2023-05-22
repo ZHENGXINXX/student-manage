@@ -33,8 +33,8 @@ export const detail = (Sno) =>{
 
 /**
  * 
- * 修改
+ * 更新
  */
-export const update =(data) =>{
-    baseReq.connection('post','student/update-Sno',data);
+export const update = (data) =>{
+    return baseReq.connection('post','/student/update-Sno',data);
 };

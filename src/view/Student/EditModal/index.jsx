@@ -4,7 +4,7 @@ import moment from 'moment';
 import 'dayjs/locale/zh-cn';
 import locale from 'antd/es/date-picker/locale/zh_CN';
 import { detail, update } from '../api';
-import { number, rules } from '../Rule';
+import { rules } from '../Rule';
 
 // eslint-disable-next-line react/prop-types
 function EditModal({updateList,pageInfo}, ref) {
@@ -16,6 +16,7 @@ function EditModal({updateList,pageInfo}, ref) {
 
     useImperativeHandle(ref, () => ({ setVisible }));
 
+    const number = [{ pattern: /^\d{11}$/, message: "请输入正确的11位学号" },{}];
 
     const layout = {
         labelCol: { span: 4 },
@@ -59,16 +60,23 @@ function EditModal({updateList,pageInfo}, ref) {
         form.validateFields()
             .then(async (values) => {
                 values.birthday = values.birthday.format('YYYY-MM-DD');
+                values.updateSno = values.sno;
+                values.sno = visible.sno;
+                const value = await detail(values.sno);
+                if(value[1].data){
+                    message.warning("该学号学生已经存在");
+                    return;
+                }
                 const [error, resData] = await update(values);
                 if (error) {
-                    message.error(error);
-                    onCancel;
+                    message.error(error.message);
+                    onCancel();
                 }
                 
                 if (resData.code === 200) {
-                    message.success("新增成功");
+                    message.success("更改成功");
                 } else {
-                    message.error("新增失败");
+                    message.error(resData.message);
                 }
                 onCancel();
                 // eslint-disable-next-line react/prop-types
@@ -78,6 +86,7 @@ function EditModal({updateList,pageInfo}, ref) {
                 // onCancel();
             });
     };
+
     return (
         <>
             <Modal
@@ -97,7 +106,7 @@ function EditModal({updateList,pageInfo}, ref) {
                             name='sno'
                             rules={number}
                             {...layout}>
-                            <Input placeholder='请输入学号' />
+                            <Input placeholder='请输入学号'/>
                         </Form.Item>
                         <Form.Item
                             label='姓名'

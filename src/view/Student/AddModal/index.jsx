@@ -1,6 +1,6 @@
 import React, { useImperativeHandle, useState } from 'react';
 import { Form, Modal, Spin, Input, message, DatePicker, Select,Button } from 'antd';
-import { insert } from '../api';
+import { detail, insert } from '../api';
 import moment from 'moment';
 import { number, rules } from '../Rule';
 
@@ -38,6 +38,11 @@ function AddModal({ updateList, pageInfo }, ref) {
         form.validateFields()
             .then(async (values) => {
                 values.birthday = values.birthday.format('YYYY-MM-DD');
+                const value = await detail(values.sno);
+                if(value[1].data){
+                    message.warning("该学号学生已经存在");
+                    return;
+                }
                 const [error, resData] = await insert(values);
                 if (error) {
                     message.error(error);
