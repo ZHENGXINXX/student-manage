@@ -2,6 +2,7 @@ import React, { useImperativeHandle, useState } from 'react';
 import { Form, Modal, Spin, Input, message, DatePicker, Select,Button } from 'antd';
 import { insert } from '../api';
 import moment from 'moment';
+import { number, rules } from '../Rule';
 
 // eslint-disable-next-line react/prop-types
 function AddModal({ updateList, pageInfo }, ref) {
@@ -12,7 +13,6 @@ function AddModal({ updateList, pageInfo }, ref) {
 
     useImperativeHandle(ref, () => ({ setVisible }));
 
-    const rules = [{ required: true, message: '不能为空' }];
     const layout = {
         labelCol: { span: 4 },
         wrapperCol: { span: 20 }
@@ -38,9 +38,7 @@ function AddModal({ updateList, pageInfo }, ref) {
         form.validateFields()
             .then(async (values) => {
                 values.birthday = values.birthday.format('YYYY-MM-DD');
-                window.console.log(values);
                 const [error, resData] = await insert(values);
-                window.console.log(resData);
                 if (error) {
                     message.error(error);
                     onCancel;
@@ -83,9 +81,9 @@ function AddModal({ updateList, pageInfo }, ref) {
                     <Form.Item
                         label='学号'
                         name='sno'
-                        rules={rules}
+                        rules={number}
                         {...layout}>
-                        <Input placeholder='请输入学号' />
+                        <Input placeholder='请输入学号' maxLength={11}/>
                     </Form.Item>
                     <Form.Item
                         label='姓名'

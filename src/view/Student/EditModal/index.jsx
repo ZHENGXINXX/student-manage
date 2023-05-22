@@ -4,6 +4,7 @@ import moment from 'moment';
 import 'dayjs/locale/zh-cn';
 import locale from 'antd/es/date-picker/locale/zh_CN';
 import { detail, update } from '../api';
+import { number, rules } from '../Rule';
 
 // eslint-disable-next-line react/prop-types
 function EditModal({updateList,pageInfo}, ref) {
@@ -15,7 +16,7 @@ function EditModal({updateList,pageInfo}, ref) {
 
     useImperativeHandle(ref, () => ({ setVisible }));
 
-    const rules = [{ required: true, message: '不能为空' }];
+
     const layout = {
         labelCol: { span: 4 },
         wrapperCol: { span: 20 }
@@ -36,7 +37,6 @@ function EditModal({updateList,pageInfo}, ref) {
 
         if (resData.code === 200) {
             resData.data.birthday = moment(resData.data.birthday, 'YYYY-MM-DD');
-            window.console.log(resData.data);
             form.setFieldsValue(resData.data);
         }
         setSpinning(false);
@@ -95,7 +95,7 @@ function EditModal({updateList,pageInfo}, ref) {
                         <Form.Item
                             label='学号'
                             name='sno'
-                            rules={rules}
+                            rules={number}
                             {...layout}>
                             <Input placeholder='请输入学号' />
                         </Form.Item>
