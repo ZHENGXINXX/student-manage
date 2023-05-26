@@ -1,24 +1,29 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
-import { Button, Popconfirm, Spin, Table, message } from 'antd';
+import { Button, Popconfirm, Spin, Table, message, Input, Select } from 'antd';
 import DetailModal from './DetailModal';
 import EditModal from './EditModal';
 import AddModal from './AddModal';
 import css from './index.module.less';
-import { del, list } from './api';
+import { del, list, sdeptList } from './api';
 
 
 /**
  * author : zx 
  * 风险应急处置/保障资源/救援队伍
  */
+const Search = Input.Search;
 //初始化信息
-const listInitState = { current: 1, pageSize: 10, keyWord: '', };
+const listInitState = { current: 1, pageSize: 10, keyword: '', ssex: '',sdept:'' };
 function listReducer(state, action) {
   switch (action.type) {
     case 'update':
       return { ...state, ...action.data };
     case 'search':
-      return { ...state, keyWord: action.data.keyWord, current: action.data.current };
+      return { ...state, keyword: action.data.keyword, current: action.data.current };
+    case 'searchSex':
+      return { ...state, ssex: action.data.ssex, current: action.data.current };
+    case 'searchSdept':
+      return { ...state, sdept: action.data.sdept, current: action.data.current };
     default:
       throw new Error();
   }
@@ -32,6 +37,7 @@ export default function Home() {
   //表格分页
   const [pageInfo, listDispatch] = useReducer(listReducer, listInitState);
   const [tabData, setData] = useState([]);
+  const [sdepts, setSdepts] = useState([]);
   const [total, setTotal] = useState(0);
   const [spinning, setSpinning] = useState(false);
 
@@ -53,8 +59,24 @@ export default function Home() {
     setSpinning(false);
   };
 
+  const getSdepts = async () => {
+    const [error, resData] = await sdeptList();
+    if (error) {
+      message.error(error);
+      return;
+    }
+
+    if (resData.code === 200) {
+      const sdepts = resData.data.map((item) => {
+        return { label: item.name, value: item.name };
+      });
+      setSdepts(sdepts);
+    }
+  };
+
   useEffect(() => {
     updateList({ ...pageInfo, page: pageInfo.current });
+    getSdepts();
   }, []);
 
   const onDetail = (sno) => {
@@ -65,19 +87,33 @@ export default function Home() {
     editRef.current.setVisible({ visible: true, sno });
   };
 
-  const onDelete = async (sno) =>{
-      const [error,resData] = await del(sno);
-      if(error){
-        message.error(error);
-        return;
-      }
+  const onDelete = async (sno) => {
+    const [error, resData] = await del(sno);
+    if (error) {
+      message.error(error);
+      return;
+    }
 
-      if(resData.code === 200){
-        message.success('删除成功');
-        updateList({...pageInfo,page:pageInfo.current});
-      }
+    if (resData.code === 200) {
+      message.success('删除成功');
+      updateList({ ...pageInfo, page: pageInfo.current });
+    }
   };
 
+  const searchHandle = (keyword) => {
+    listDispatch({ type: 'search', data: { keyword, current: 1 } });
+    updateList({ ...pageInfo, keyword, page: pageInfo.current });
+  };
+
+  const searchSex = (ssex) => {
+    listDispatch({ type: 'searchSex', data: { ssex, current: 1 } });
+    updateList({ ...pageInfo, ssex, page: pageInfo.current });
+  };
+
+  const searchSdept = (sdept) =>{
+    listDispatch({ type: 'searchSdept', data: { sdept, current: 1 } });
+    updateList({ ...pageInfo, sdept, page: pageInfo.current });
+  };
   //表格字段
   const colums = [
     {
@@ -149,6 +185,28 @@ export default function Home() {
   return (
     <>
       <div className={css.handle}>
+        <Search placeholder='请输入学生信息'
+          style={{ width: 200 }}
+          onSearch={searchHandle} />
+        <Select placeholder='请选择学生性别'
+          style={{ width: 200, marginLeft: 20 }}
+          allowClear
+          onChange={searchSex}
+          options={[
+            {
+              label: '男',
+              value: '男'
+            },
+            {
+              label: '女',
+              value: '女'
+            },
+          ]} />
+        <Select placeholder='请选择学院'
+          style={{ width: 200, marginLeft: 20 }}
+          allowClear
+          onChange={searchSdept}
+          options={sdepts} />
         <Button
           type='primary'
           style={{ marginLeft: 20, marginRight: 20 }}

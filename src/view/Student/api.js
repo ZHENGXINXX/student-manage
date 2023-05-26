@@ -38,3 +38,11 @@ export const detail = (Sno) =>{
 export const update = (data) =>{
     return baseReq.connection('post','/student/update-Sno',data);
 };
+
+/**
+ * 
+ * 获取学院列表
+ */
+export const sdeptList = () =>{
+    return baseReq.connection('post','/student/sdept-list');
+};

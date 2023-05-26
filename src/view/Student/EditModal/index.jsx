@@ -62,11 +62,6 @@ function EditModal({updateList,pageInfo}, ref) {
                 values.birthday = values.birthday.format('YYYY-MM-DD');
                 values.updateSno = values.sno;
                 values.sno = visible.sno;
-                const value = await detail(values.sno);
-                if(value[1].data){
-                    message.warning("该学号学生已经存在");
-                    return;
-                }
                 const [error, resData] = await update(values);
                 if (error) {
                     message.error(error.message);
