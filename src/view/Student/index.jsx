@@ -44,6 +44,7 @@ export default function Home() {
   const updateList = async (data = {}) => {
     setSpinning(true);
     const [error, resData] = await list(data);
+    window.console.log(1);
     if (error) {
       message.error(error);
       setSpinning(false);

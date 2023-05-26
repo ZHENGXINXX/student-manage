@@ -19,6 +19,7 @@ class RequestClass {
             headers: {
                 'X-Custom-Header': 'foobar',
             },
+            // cancelToken:true,
             timeout: 600000,
             withCredentials: false, // 跨域请求时发送Cookie
         });
